@@ -513,7 +513,7 @@ class Message
         ) {
             $attachment          = new Attachment($this, $structure, $partIdentifier);
             $this->attachments[] = $attachment;
-        } elseif ($structure->type == TYPETEXT || $structure->type == TYPEMULTIPART) {
+        } elseif ($structure->type == TYPETEXT) {
             $messageBody = isset($partIdentifier) ?
                 imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID | FT_PEEK)
                 : imap_body($this->imapStream, $this->uid, FT_UID | FT_PEEK);
@@ -537,7 +537,7 @@ class Message
                 }
             }
 
-            if (strtolower($structure->subtype) === 'plain' || ($structure->type == TYPEMULTIPART && strtolower($structure->subtype) !== 'alternative')) {
+            if (strtolower($structure->subtype) === 'plain') {
                 if (isset($this->plaintextMessage)) {
                     $this->plaintextMessage .= PHP_EOL . PHP_EOL;
                 } else {
