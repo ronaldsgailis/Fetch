@@ -513,7 +513,7 @@ class Message
         ) {
             $attachment          = new Attachment($this, $structure, $partIdentifier);
             $this->attachments[] = $attachment;
-        } elseif ($structure->type == 0 || $structure->type == 1) {
+        } elseif ($structure->type == TYPETEXT || $structure->type == TYPEMULTIPART) {
             $messageBody = isset($partIdentifier) ?
                 imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID | FT_PEEK)
                 : imap_body($this->imapStream, $this->uid, FT_UID | FT_PEEK);
@@ -537,7 +537,7 @@ class Message
                 }
             }
 
-            if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
+            if (strtolower($structure->subtype) === 'plain' || ($structure->type == TYPEMULTIPART && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
                     $this->plaintextMessage .= PHP_EOL . PHP_EOL;
                 } else {
@@ -584,11 +584,11 @@ class Message
 
         switch (true) {
             case $encoding === 'quoted-printable':
-            case $encoding === 4:
+            case $encoding === ENCQUOTEDPRINTABLE:
                 return quoted_printable_decode($data);
 
             case $encoding === 'base64':
-            case $encoding === 3:
+            case $encoding === ENCBASE64:
                 return base64_decode($data);
 
             default:
